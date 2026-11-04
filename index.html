@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>آرگوس | تیم امنیت سایبری</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#04060c; --cyan:#00e5ff; --green:#39ff14; --violet:#7c4dff;
+  --txt:#d7e3f4; --muted:#7d8ba3;
+  --card:rgba(10,18,32,.72); --line:rgba(0,229,255,.18);
+  --glow:0 0 24px rgba(0,229,255,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Vazirmatn',sans-serif; background:var(--bg); color:var(--txt);
+  overflow-x:hidden; line-height:1.9; min-height:100vh;
+}
+/* ===== پس‌زمینه فضایی ===== */
+#stars{position:fixed; inset:0; z-index:-3; display:block}
+.bg-glow{
+  position:fixed; inset:0; z-index:-2; pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 80% -10%, rgba(124,77,255,.22), transparent 70%),
+    radial-gradient(800px 500px at 10% 20%, rgba(0,229,255,.14), transparent 70%),
+    radial-gradient(700px 400px at 50% 110%, rgba(57,255,20,.10), transparent 70%);
+}
+.grid-floor{
+  position:fixed; left:-25%; right:-25%; bottom:-10%; height:60vh; z-index:-1;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:60px 60px;
+  transform:perspective(420px) rotateX(70deg);
+  mask-image:linear-gradient(to top,#000 0%,transparent 85%);
+  -webkit-mask-image:linear-gradient(to top,#000 0%,transparent 85%);
+  opacity:.55; pointer-events:none;
+}
+/* ===== هدر ===== */
+header{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
+  background:rgba(4,6,12,.75); border-bottom:1px solid var(--line);
+}
+.nav{max-width:1180px; margin:auto; padding:14px 22px; display:flex; align-items:center; gap:18px}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--txt)}
+.brand .eye{width:38px; height:38px; filter:drop-shadow(0 0 8px rgba(0,229,255,.6))}
+.brand b{font-size:1.15rem; letter-spacing:.5px}
+.brand small{color:var(--muted); font-size:.68rem; display:block; line-height:1; margin-top:2px}
+.nav-links{display:flex; gap:26px; margin-inline-start:auto}
+.nav-links a{color:var(--muted); text-decoration:none; font-size:.92rem; position:relative; transition:.25s}
+.nav-links a::after{
+  content:''; position:absolute; bottom:-6px; right:0; width:0; height:2px;
+  background:linear-gradient(90deg,var(--cyan),var(--green)); transition:.3s;
+}
+.nav-links a:hover{color:var(--cyan); text-shadow:0 0 12px rgba(0,229,255,.6)}
+.nav-links a:hover::after{width:100%}
+.burger{display:none; background:none; border:1px solid var(--line); color:var(--cyan);
+  border-radius:10px; padding:6px 10px; font-size:1.2rem; cursor:pointer; margin-inline-start:auto}
+/* ===== دکمه‌ها ===== */
+.btn{
+  display:inline-flex; align-items:center; gap:8px; padding:11px 22px; border-radius:12px;
+  border:1px solid var(--cyan); color:#031018; text-decoration:none; font-weight:600;
+  background:linear-gradient(135deg,var(--cyan),var(--green)); cursor:pointer;
+  transition:.28s; font-family:inherit; font-size:.9rem;
+}
+.btn:hover{box-shadow:0 0 26px rgba(0,229,255,.5); transform:translateY(-2px)}
+.btn-ghost{background:transparent; color:var(--cyan); border:1px solid var(--line)}
+.btn-ghost:hover{background:rgba(0,229,255,.08); box-shadow:var(--glow)}
+/* ===== بخش‌ها ===== */
+section{max-width:1180px; margin:auto; padding:90px 22px; position:relative}
+.sec-title{font-size:1.85rem; margin-bottom:8px; display:flex; align-items:center; gap:12px}
+.sec-title::before{
+  content:''; width:5px; height:30px; border-radius:4px;
+  background:linear-gradient(var(--cyan),var(--green)); box-shadow:var(--glow);
+}
+.sec-sub{color:var(--muted); font-size:.92rem; margin-bottom:40px}
+/* ===== هیرو ===== */
+#hero{padding-top:80px; text-align:center; min-height:88vh; display:flex;
+  flex-direction:column; justify-content:center; align-items:center}
+.badge-top{
+  font-family:'Share Tech Mono',monospace; font-size:.72rem; letter-spacing:2px;
+  color:var(--green); border:1px solid rgba(57,255,20,.3); border-radius:999px;
+  padding:6px 16px; margin-bottom:24px; background:rgba(57,255,20,.05);
+}
+.glitch{
+  font-family:'Share Tech Mono',monospace; font-size:clamp(3rem,11vw,7rem);
+  font-weight:400; letter-spacing:.12em; color:#fff; position:relative;
+  text-shadow:0 0 30px rgba(0,229,255,.55); line-height:1.1;
+}
+.glitch::before,.glitch::after{
+  content:attr(data-text); position:absolute; inset:0; background:var(--bg);
+  clip-path:inset(0 0 0 0);
+}
+.glitch::before{color:var(--cyan); animation:g1 3.2s infinite linear alternate-reverse}
+.glitch::after{color:var(--green); animation:g2 2.6s infinite linear alternate-reverse}
+@keyframes g1{0%,92%,100%{clip-path:inset(100% 0 0 0);transform:translate(0)}
+ 93%{clip-path:inset(10% 0 70% 0);transform:translate(-4px,2px)}
+ 96%{clip-path:inset(60% 0 20% 0);transform:translate(4px,-2px)}}
+@keyframes g2{0%,90%,100%{clip-path:inset(100% 0 0 0);transform:translate(0)}
+ 91%{clip-path:inset(40% 0 40% 0);transform:translate(5px,0)}
+ 95%{clip-path:inset(75% 0 5% 0);transform:translate(-5px,0)}}
+.hero-fa{font-size:clamp(1.1rem,3vw,1.6rem); font-weight:800; margin-top:6px; color:#fff}
+.hero-desc{color:var(--muted); max-width:640px; margin:18px auto 30px; font-size:.98rem}
+.chips{display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:34px}
+.chip{
+  font-family:'Share Tech Mono',monospace; font-size:.75rem; padding:6px 14px;
+  border-radius:8px; border:1px solid var(--line); color:var(--cyan);
+  background:rgba(0,229,255,.05);
+}
+/* ترمینال */
+.terminal{
+  width:min(660px,100%); text-align:right; border:1px solid var(--line); border-radius:14px;
+  background:rgba(3,7,14,.92); box-shadow:0 20px 60px rgba(0,0,0,.6),var(--glow);
+  overflow:hidden; margin-top:10px;
+}
+.term-bar{display:flex; gap:7px; padding:11px 14px; border-bottom:1px solid var(--line);
+  background:rgba(255,255,255,.02)}
+.term-bar i{width:11px; height:11px; border-radius:50%; display:block}
+.term-bar i:nth-child(1){background:#ff5f56}
+.term-bar i:nth-child(2){background:#ffbd2e}
+.term-bar i:nth-child(3){background:#27c93f}
+.term-body{
+  padding:16px 18px; font-family:'Share Tech Mono',monospace; font-size:.8rem;
+  color:var(--green); direction:ltr; text-align:left; min-height:118px; line-height:1.9;
+}
+.term-body .cmd{color:var(--cyan)}
+.cursor{display:inline-block; width:8px; height:14px; background:var(--green);
+  vertical-align:middle; animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+/* ===== درباره ===== */
+.about-box{
+  border:1px solid var(--line); border-radius:16px; padding:32px;
+  background:var(--card); backdrop-filter:blur(8px); position:relative; overflow:hidden;
+}
+.about-box::before{
+  content:''; position:absolute; top:0; right:0; width:180px; height:180px;
+  background:radial-gradient(circle,rgba(0,229,255,.18),transparent 70%); pointer-events:none;
+}
+.about-box p{color:var(--txt); font-size:1rem; max-width:900px}
+.about-box .legal{
+  margin-top:18px; padding:16px 20px; border-right:3px solid var(--green);
+  background:rgba(57,255,20,.05); border-radius:10px; color:#bfe9c8; font-size:.94rem;
+}
+/* ===== اعضا ===== */
+.members-head{display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin-bottom:26px}
+.members-head .sec-sub{margin:0}
+.members-head .spacer{margin-inline-start:auto}
+.grid{display:grid; gap:18px; grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.member{
+  border:1px solid var(--line); border-radius:16px; padding:22px; background:var(--card);
+  position:relative; transition:.3s; overflow:hidden; backdrop-filter:blur(6px);
+}
+.member:hover{transform:translateY(-6px); border-color:rgba(0,229,255,.5);
+  box-shadow:0 18px 44px rgba(0,229,255,.15)}
+.member::after{
+  content:''; position:absolute; inset:auto 0 0 0; height:2px;
+  background:linear-gradient(90deg,var(--cyan),var(--green)); transform:scaleX(0);
+  transition:.35s; transform-origin:right;
+}
+.member:hover::after{transform:scaleX(1)}
+.avatar{
+  width:56px; height:56px; border-radius:50%; display:grid; place-items:center;
+  font-family:'Share Tech Mono',monospace; font-size:1.4rem; color:#031018; font-weight:700;
+  background:linear-gradient(135deg,var(--cyan),var(--green)); margin-bottom:14px;
+  box-shadow:0 0 20px rgba(0,229,255,.35);
+}
+.member h4{font-size:1.02rem; margin-bottom:4px}
+.member .role{color:var(--muted); font-size:.82rem}
+.member .tag{
+  display:inline-block; margin-top:12px; font-family:'Share Tech Mono',monospace;
+  font-size:.68rem; padding:3px 10px; border-radius:6px;
+  border:1px solid rgba(124,77,255,.4); color:#b39dff; background:rgba(124,77,255,.1);
+}
+.del{
+  position:absolute; top:12px; left:12px; width:26px; height:26px; border-radius:8px;
+  border:1px solid rgba(255,90,90,.35); background:rgba(255,60,60,.1); color:#ff7a7a;
+  cursor:pointer; font-size:.85rem; line-height:1; display:grid; place-items:center;
+  opacity:0; transition:.25s;
+}
+.member:hover .del{opacity:1}
+.del:hover{background:rgba(255,60,60,.25)}
+/* فرم افزودن */
+.add-form{
+  display:none; grid-template-columns:1fr 1fr 1fr auto; gap:12px; margin-bottom:26px;
+  padding:20px; border:1px dashed var(--line); border-radius:14px;
+  background:rgba(0,229,255,.03);
+}
+.add-form.open{display:grid}
+.add-form input{
+  padding:11px 14px; border-radius:10px; border:1px solid var(--line);
+  background:rgba(0,0,0,.4); color:var(--txt); font-family:inherit; font-size:.88rem; outline:none;
+}
+.add-form input:focus{border-color:var(--cyan); box-shadow:0 0 0 3px rgba(0,229,255,.12)}
+/* ===== افتخارات ===== */
+.ach-grid{display:grid; gap:18px; grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.ach{
+  border:1px solid var(--line); border-radius:16px; padding:24px; background:var(--card);
+  display:flex; gap:16px; transition:.3s; backdrop-filter:blur(6px);
+}
+.ach:hover{border-color:rgba(57,255,20,.45); transform:translateY(-4px);
+  box-shadow:0 16px 40px rgba(57,255,20,.1)}
+.ach .ico{
+  min-width:46px; height:46px; border-radius:12px; display:grid; place-items:center;
+  font-size:1.3rem; background:rgba(57,255,20,.1); border:1px solid rgba(57,255,20,.25);
+}
+.ach h4{font-size:.98rem; margin-bottom:4px}
+.ach p{color:var(--muted); font-size:.84rem}
+.ach .yr{font-family:'Share Tech Mono',monospace; font-size:.7rem; color:var(--green);
+  margin-top:8px; display:block}
+/* ===== تماس ===== */
+.contact-grid{display:grid; gap:18px; grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.cc{
+  border:1px solid var(--line); border-radius:16px; padding:26px; background:var(--card);
+  text-align:center; transition:.3s; text-decoration:none; color:inherit; display:block;
+}
+.cc:hover{border-color:var(--cyan); box-shadow:var(--glow); transform:translateY(-4px)}
+.cc .ico{font-size:1.8rem; margin-bottom:10px}
+.cc b{display:block; margin-bottom:6px; font-size:.95rem}
+.cc span{color:var(--muted); font-size:.82rem; direction:ltr; display:block;
+  font-family:'Share Tech Mono',monospace}
+.notice{
+  margin-top:28px; padding:20px 24px; border-radius:14px; border:1px solid rgba(255,189,46,.3);
+  background:rgba(255,189,46,.06); color:#ffd98a; font-size:.88rem;
+}
+/* ===== فوتر ===== */
+footer{
+  border-top:1px solid var(--line); padding:34px 22px; text-align:center;
+  color:var(--muted); font-size:.82rem; background:rgba(4,6,12,.6);
+}
+footer b{color:var(--cyan)}
+/* ===== بازگشت به بالا ===== */
+#toTop{
+  position:fixed; bottom:26px; left:26px; width:46px; height:46px; border-radius:14px;
+  border:1px solid var(--line); background:rgba(0,229,255,.1); color:var(--cyan);
+  font-size:1.1rem; cursor:pointer; display:grid; place-items:center; opacity:0;
+  pointer-events:none; transition:.3s; backdrop-filter:blur(8px); z-index:60;
+}
+#toTop.show{opacity:1; pointer-events:auto}
+#toTop:hover{box-shadow:var(--glow); background:rgba(0,229,255,.2)}
+/* ===== انیمیشن ورود ===== */
+.reveal{opacity:0; transform:translateY(28px); transition:.7s cubic-bezier(.2,.7,.3,1)}
+.reveal.in{opacity:1; transform:none}
+/* ===== ریسپانسیو ===== */
+@media(max-width:900px){
+  .add-form{grid-template-columns:1fr 1fr}
+}
+@media(max-width:760px){
+  .nav-links{
+    display:none; position:absolute; top:100%; right:0; left:0; flex-direction:column;
+    gap:0; background:rgba(4,6,12,.97); border-bottom:1px solid var(--line); padding:10px 22px 18px;
+  }
+  .nav-links.open{display:flex}
+  .nav-links a{padding:12px 0; border-bottom:1px solid rgba(255,255,255,.04)}
+  .burger{display:block}
+  .add-form{grid-template-columns:1fr}
+  section{padding:64px 18px}
+  .about-box{padding:22px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+<div class="bg-glow"></div>
+<div class="grid-floor"></div>
+
+<!-- ================= هدر ================= -->
+<header>
+  <nav class="nav">
+    <a href="#hero" class="brand">
+      <!-- 🔻 لوگوی خودت رو بذار: <img class="eye" src="logo.png" alt="Argus"> -->
+      <svg class="eye" viewBox="0 0 64 64" aria-hidden="true">
+        <defs>
+          <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#00e5ff"/><stop offset="1" stop-color="#39ff14"/>
+          </linearGradient>
+        </defs>
+        <path d="M32 13c13 0 23 10 27 19-4 9-14 19-27 19S9 41 5 32c4-9 14-19 27-19z"
+              fill="none" stroke="url(#lg)" stroke-width="2.6"/>
+        <circle cx="32" cy="32" r="8.5" fill="none" stroke="url(#lg)" stroke-width="2.6"/>
+        <circle cx="32" cy="32" r="3" fill="#39ff14"/>
+      </svg>
+      <span><b>آرگوس</b><small>ARGUS SECURITY TEAM</small></span>
+    </a>
+    <button class="burger" id="burger" aria-label="منو">☰</button>
+    <div class="nav-links" id="navLinks">
+      <a href="#about">درباره ما</a>
+      <a href="#members">اعضا</a>
+      <a href="#achievements">افتخارات</a>
+      <a href="#contact">ارتباط با ما</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <!-- ================= هیرو ================= -->
+  <section id="hero">
+    <div class="badge-top">RESPONSIBLE DISCLOSURE • CTF • DEFENSE</div>
+    <h1 class="glitch" data-text="ARGUS">ARGUS</h1>
+    <div class="hero-fa">تیم امنیت سایبری آرگوس</div>
+    <p class="hero-desc">
+      چشمی همیشه بیدار در دنیای سایبری — یادگیری، دفاع، شکار تهدید و گزارش مسئولانه.
+    </p>
+    <div class="chips">
+      <span class="chip">Red Team</span>
+      <span class="chip">Blue Team</span>
+      <span class="chip">CTF</span>
+      <span class="chip">Malware Analysis</span>
+      <span class="chip">DFIR</span>
+      <span class="chip">Web Security</span>
+    </div>
+    <a href="#members" class="btn">مشاهده اعضای تیم ↓</a>
+
+    <div class="terminal">
+      <div class="term-bar"><i></i><i></i><i></i></div>
+      <div class="term-body"><span id="typed"></span><span class="cursor"></span></div>
+    </div>
+  </section>
+
+  <!-- ================= درباره ================= -->
+  <section id="about">
+    <h2 class="sec-title reveal">درباره تیم</h2>
+    <p class="sec-sub reveal">ما کی هستیم و چه خطی را دنبال می‌کنیم</p>
+    <div class="about-box reveal">
+      <p>
+        تیم <b>آرگوس</b> مجموعه‌ای از علاقه‌مندان به امنیت سایبری است که با تمرکز بر آموزش،
+        پژوهش و دفاع، در کنار هم رشد می‌کنیم. ما در مسابقات CTF شرکت می‌کنیم،
+        آسیب‌پذیری‌ها را به‌صورت مسئولانه گزارش می‌دهیم و دانش خود را در اختیار
+        جامعه امنیتی قرار می‌دهیم.
+      </p>
+      <div class="legal">
+        ما در چارچوب قانون فعالیت می‌کنیم. هدف ما یادگیری امنیت سایبری، دفاع، CTF و
+        گزارش مسئولانه است. هیچ فعالیت غیرمجاز، بدافزار، فیشینگ یا نقض حریم خصوصی
+        پذیرفته نیست.
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= اعضا ================= -->
+  <section id="members">
+    <h2 class="sec-title reveal">اعضای تیم</h2>
+    <div class="members-head reveal">
+      <p class="sec-sub">لیست اعضا را می‌توانید مدیریت کنید (افزودن / حذف)</p>
+      <div class="spacer"></div>
+      <button class="btn btn-ghost" id="toggleForm">+ افزودن عضو</button>
+      <button class="btn btn-ghost" id="resetMembers" title="بازگردانی لیست پیش‌فرض">↺</button>
+    </div>
+
+    <form class="add-form" id="addForm">
+      <input type="text" id="mName" placeholder="نام / Nickname" required maxlength="30">
+      <input type="text" id="mRole" placeholder="نقش (مثلاً Web Pentester)" required maxlength="40">
+      <input type="text" id="mTag" placeholder="تگ (مثلاً Red Team)" maxlength="18">
+      <button class="btn" type="submit">ثبت</button>
+    </form>
+
+    <div class="grid" id="membersGrid"></div>
+  </section>
+
+  <!-- ================= افتخارات ================= -->
+  <section id="achievements">
+    <h2 class="sec-title reveal">افتخارات و دستاوردها</h2>
+    <p class="sec-sub reveal">CTF، گزارش مسئولانه و پژوهش‌های امنیتی</p>
+    <div class="ach-grid">
+      <div class="ach reveal">
+        <div class="ico">🏆</div>
+        <div>
+          <h4>رتبه برتر مسابقات CTF</h4>
+          <p>حضور در جمع تیم‌های برتر مسابقات ملی امنیت سایبری</p>
+          <span class="yr">2024</span>
+        </div>
+      </div>
+      <div class="ach reveal">
+        <div class="ico">🛡️</div>
+        <div>
+          <h4>گزارش مسئولانه آسیب‌پذیری</h4>
+          <p>کشف و گزارش چندین آسیب‌پذیری به سازمان‌ها پیش از سوءاستفاده</p>
+          <span class="yr">2023 — 2024</span>
+        </div>
+      </div>
+      <div class="ach reveal">
+        <div class="ico">🔍</div>
+        <div>
+          <h4>پژوهش و تحلیل بدافزار</h4>
+          <p>انتشار تحلیل‌های فنی و IOC در حوزه تهدیدات نوظهور</p>
+          <span class="yr">2024</span>
+        </div>
+      </div>
+      <div class="ach reveal">
+        <div class="ico">🎓</div>
+        <div>
+          <h4>کارگاه‌های آموزشی</h4>
+          <p>برگزاری دوره‌های امنیت وب و جرم‌شناسی دیجیتال</p>
+          <span class="yr">2023</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= تماس ================= -->
+  <section id="contact">
+    <h2 class="sec-title reveal">ارتباط با ما</h2>
+    <p class="sec-sub reveal">پشتیبانی، همکاری و گزارش مسئولانه آسیب‌پذیری</p>
+    <div class="contact-grid">
+      <a class="cc reveal" href="mailto:support@argus.example">
+        <div class="ico">✉️</div><b>ایمیل پشتیبانی</b>
+        <span>support@argus.example</span>
+      </a>
+      <a class="cc reveal" href="https://t.me/" target="_blank" rel="noopener">
+        <div class="ico">💬</div><b>تلگرام</b>
+        <span>@argus_support</span>
+      </a>
+      <a class="cc reveal" href="#">
+        <div class="ico">🔑</div><b>کلید PGP</b>
+        <span>برای گزارش امن</span>
+      </a>
+      <a class="cc reveal" href="#">
+        <div class="ico">🐙</div><b>گیت‌هاب تیم</b>
+        <span>github.com/argus</span>
+      </a>
+    </div>
+    <div class="notice reveal">
+      ⚠️ برای گزارش مسئولانه آسیب‌پذیری، لطفاً فقط از کانال‌های رسمی بالا استفاده کنید.
+      ما به هیچ درخواست غیرقانونی، تست نفوذ بدون مجوز یا سوءاستفاده پاسخ نمی‌دهیم.
+    </div>
+  </section>
+</main>
+
+<footer>
+  © 2025 <b>آرگوس</b> — تیم امنیت سایبری | ساخته‌شده با ☕ و خط فرمان
+</footer>
+
+<button id="toTop" aria-label="بازگشت به بالا">↑</button>
+
+<script>
+/* ============================================================
+   ۱) ستاره‌های پس‌زمینه
+   ============================================================ */
+(function starfield(){
+  const c = document.getElementById('stars');
+  const ctx = c.getContext('2d');
+  let w, h, stars = [], mx = 0, my = 0;
+
+  function resize(){
+    w = c.width = innerWidth;
+    h = c.height = innerHeight;
+    stars = Array.from({length: Math.min(220, Math.floor(w*h/9000))}, () => ({
+      x: Math.random()*w,
+      y: Math.random()*h,
+      r: Math.random()*1.5 + .3,
+      s: Math.random()*.35 + .06,
+      a: Math.random(),
+      hue: Math.random() > .75 ? '57,255,20' : '0,229,255'
+    }));
+  }
+  resize();
+  addEventListener('resize', resize);
+  addEventListener('mousemove', e => {
+    mx = (e.clientX / innerWidth - .5) * 14;
+    my = (e.clientY / innerHeight - .5) * 14;
+  });
+
+  (function loop(){
+    ctx.clearRect(0,0,w,h);
+    for(const st of stars){
+      st.y -= st.s;
+      if(st.y < -4){ st.y = h + 4; st.x = Math.random()*w; }
+      st.a += .01;
+      const alpha = .25 + Math.abs(Math.sin(st.a)) * .6;
+      ctx.beginPath();
+      ctx.arc(st.x + mx*st.r, st.y + my*st.r, st.r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(${st.hue},${alpha})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(loop);
+  })();
+})();
+
+/* ============================================================
+   ۲) منوی موبایل
+   ============================================================ */
+const burger = document.getElementById('burger');
+const navLinks = document.getElementById('navLinks');
+burger.addEventListener('click', () => navLinks.classList.toggle('open'));
+navLinks.addEventListener('click', e => {
+  if(e.target.tagName === 'A') navLinks.classList.remove('open');
+});
+
+/* ============================================================
+   ۳) ترمینال تایپ‌شونده
+   ============================================================ */
+(function typing(){
+  const lines = [
+    '$ whoami',
+    '> argus_security_team',
+    '$ status --defense',
+    '> [OK] learning  [OK] CTF  [OK] responsible-disclosure',
+    '$ cat rules.txt',
+    '> هیچ فعالیت غیرمجاز، بدافزار یا نقض حریم خصوصی پذیرفته نیست.'
+  ];
+  const el = document.getElementById('typed');
+  let li = 0, ci = 0, txt = '';
+
+  function step(){
+    if(li >= lines.length){ setTimeout(() => { li = 0; ci = 0; txt = ''; el.textContent = ''; step(); }, 3800); return; }
+    const line = lines[li];
+    txt += line[ci];
+    el.innerHTML = txt.split('\n').map(t =>
+      t.startsWith('$') ? `<span class="cmd">${t}</span>` : t
+    ).join('\n');
+    ci++;
+    if(ci > line.length){ txt += '\n'; li++; ci = 0; setTimeout(step, 420); }
+    else setTimeout(step, 34);
+  }
+  step();
+})();
+
+/* ============================================================
+   ۴) مدیریت اعضا (localStorage)
+   ============================================================ */
+const STORAGE_KEY = 'argus_members_v1';
+
+const DEFAULT_MEMBERS = [
+  { id:'m1', name:'A.R.G.U.S', role:'بنیان‌گذار | Red Team',     tag:'Founder' },
+  { id:'m2', name:'N0ctis',    role:'تحلیل بدافزار',              tag:'Malware' },
+  { id:'m3', name:'Sh3ll',     role:'تست نفوذ وب',                tag:'Web' },
+  { id:'m4', name:'Void',      role:'Blue Team | DFIR',           tag:'Blue' }
+];
+
+const grid = document.getElementById('membersGrid');
+const form = document.getElementById('addForm');
+
+function loadMembers(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return [...DEFAULT_MEMBERS];
+    const data = JSON.parse(raw);
+    return Array.isArray(data) ? data : [...DEFAULT_MEMBERS];
+  }catch(e){ return [...DEFAULT_MEMBERS]; }
+}
+function saveMembers(list){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+let members = loadMembers();
+
+function renderMembers(){
+  grid.innerHTML = '';
+  if(!members.length){
+    grid.innerHTML = '<p style="color:var(--muted)">هنوز عضوی ثبت نشده است.</p>';
+    return;
+  }
+  members.forEach(m => {
+    const card = document.createElement('div');
+    card.className = 'member reveal';
+    card.innerHTML = `
+      <button class="del" data-id="${esc(m.id)}" title="حذف عضو">✕</button>
+      <div class="avatar">${esc((m.name || '?').trim().charAt(0).toUpperCase())}</div>
+      <h4>${esc(m.name)}</h4>
+      <div class="role">${esc(m.role)}</div>
+      ${m.tag ? `<span class="tag">${esc(m.tag)}</span>` : ''}
+    `;
+    grid.appendChild(card);
+  });
+  observeReveals();
+}
+
+grid.addEventListener('click', e => {
+  const btn = e.target.closest('.del');
+  if(!btn) return;
+  const id = btn.dataset.id;
+  const target = members.find(m => m.id === id);
+  if(!target) return;
+  if(confirm(`عضو «${target.name}» حذف شود؟`)){
+    members = members.filter(m => m.id !== id);
+    saveMembers(members);
+    renderMembers();
+  }
+});
+
+document.getElementById('toggleForm').addEventListener('click', () => {
+  form.classList.toggle('open');
+  if(form.classList.contains('open')) document.getElementById('mName').focus();
+});
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const name = document.getElementById('mName').value.trim();
+  const role = document.getElementById('mRole').value.trim();
+  const tag  = document.getElementById('mTag').value.trim();
+  if(!name || !role) return;
+
+  members.push({ id: 'm' + Date.now(), name, role, tag });
+  saveMembers(members);
+  renderMembers();
+  form.reset();
+  form.classList.remove('open');
+});
+
+document.getElementById('resetMembers').addEventListener('click', () => {
+  if(confirm('لیست اعضا به حالت پیش‌فرض برگردد؟')){
+    members = [...DEFAULT_MEMBERS];
+    saveMembers(members);
+    renderMembers();
+  }
+});
+
+renderMembers();
+
+/* ============================================================
+   ۵) انیمیشن ورود المان‌ها
+   ============================================================ */
+let io;
+function observeReveals(){
+  if(!io){
+    io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold: .12 });
+  }
+  document.querySelectorAll('.reveal:not(.in)').forEach(el => io.observe(el));
+}
+observeReveals();
+
+/* ============================================================
+   ۶) دکمه بازگشت به بالا
+   ============================================================ */
+const toTop = document.getElementById('toTop');
+addEventListener('scroll', () => {
+  toTop.classList.toggle('show', scrollY > 420);
+});
+toTop.addEventListener('click', () => scrollTo({ top:0, behavior:'smooth' }));
+</script>
+</body>
+  </html>
